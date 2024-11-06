@@ -3,6 +3,7 @@ import './App.css';
 import Header from "./Components/Header";
 import NavBar from './Components/NavBar';
 import Slider from './Components/Slider';
+import waves from './Components/waves';
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
       <NavBar title="GenreEq"/>
       <Header/>
       <Slider/>
+      <waves/>
     </>
   );
 }
