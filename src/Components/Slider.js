@@ -1,12 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 
 export default function SongPlayer() {
-  const songs = [
-    { title: 'Song 1', src: '/song1.mp3' },
-    { title: 'Song 2', src: '/song2.mp3' },
-    { title: 'Song 3', src: '/song3.mp3' }
-  ];
-
+  const [songs, setSongs] = useState([]);
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -19,11 +14,17 @@ export default function SongPlayer() {
     treble: 50,
     genre: 'pop'
   });
-  
+
   const frequencies = [63, 125, 250, 500, 1000, 2000, 4000, 8000, 16000];
   const genres = ['Pop', 'Classic', 'Jazz', 'Rock'];
-  
+
   const audioRef = useRef(null);
+
+  // Load songs from localStorage when the component mounts
+  useEffect(() => {
+    const savedSongs = JSON.parse(localStorage.getItem('songs')) || [];
+    setSongs(savedSongs);
+  }, []);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -98,22 +99,22 @@ export default function SongPlayer() {
 
   return (
     <div style={{
-      width: '2000px',
-      backgroundColor: '#333', 
-      color: '#fff', 
+      width: '1300px',
+      backgroundColor: '#2A2A2A',
+      color: '#fff',
       borderRadius: '20px',
-      padding: '100px',
+      padding: '60px',
       boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.3)',
       textAlign: 'center',
       margin: '20px auto'
     }}>
-      <h2>{songs[currentSongIndex].title}</h2>
+      <h2>{songs[currentSongIndex]?.title || "No Song Available"}</h2>
       <audio
         ref={audioRef}
         onTimeUpdate={handleTimeUpdate}
         onEnded={handleNext}
       >
-        <source src={songs[currentSongIndex].src} type="audio/mpeg" />
+        <source src={songs[currentSongIndex]?.src} type="audio/mpeg" />
         Your browser does not support the audio element.
       </audio>
 
@@ -141,7 +142,7 @@ export default function SongPlayer() {
           left: '5%',
           width: '90%',
           height: '90%',
-          backgroundColor: '#222',
+          backgroundColor: '#747474',
           padding: '30px',
           borderRadius: '15px',
           boxShadow: '0 5px 15px rgba(0, 0, 0, 0.5)',
@@ -150,6 +151,21 @@ export default function SongPlayer() {
           overflowY: 'auto',
           display: 'flex'
         }}>
+          <button
+            onClick={() => setShowEqualizer(false)}
+            style={{
+              position: 'absolute',
+              top: '10px',
+              right: '10px',
+              background: 'none',
+              color: '#fff',
+              border: 'none',
+              fontSize: '24px',
+              cursor: 'pointer'
+            }}
+          >
+            X
+          </button>
           <div style={{ flex: 2, padding: '10px' }}>
             <h3>Frequency Adjustment</h3>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', height: '300px' }}>
@@ -165,7 +181,9 @@ export default function SongPlayer() {
                       width: '30px',
                       height: '200px',
                       writingMode: 'bt-lr',
-                      WebkitAppearance: 'slider-vertical'
+                      WebkitAppearance: 'slider-vertical',
+                      backgroundColor: '#471F97', // Slider track color
+                      accentColor: '#1B1429',  // Slider thumb and filled track color
                     }}
                   />
                   <div>{freq} Hz</div>
@@ -173,8 +191,8 @@ export default function SongPlayer() {
               ))}
             </div>
           </div>
-          
-          <div style={{ flex: 1, padding: '10px', borderLeft: '1px solid #555' }}>
+
+          <div style={{ flex: 1, padding: '20px', borderLeft: '1px solid #555' }}>
             <h3>Genre</h3>
             <div>
               {genres.map((genre) => (
@@ -190,20 +208,41 @@ export default function SongPlayer() {
                 </label>
               ))}
             </div>
-            <button
-              onClick={() => setShowEqualizer(false)}
-              style={{
-                marginTop: '20px',
-                padding: '10px 20px',
-                backgroundColor: '#444',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '5px',
-                cursor: 'pointer'
-              }}
-            >
-              Save Equalizer Settings
-            </button>
+            {/* Buttons at the bottom */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: '20px'
+            }}>
+              <button
+                onClick={() => setShowEqualizer(false)}
+                style={{
+                  padding: '10px 20px',
+                  backgroundColor: '#444',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '5px',
+                  cursor: 'pointer',
+                  marginRight: '10px'
+                }}
+              >
+                Go Back
+              </button>
+              <button
+                onClick={() => setShowEqualizer(false)}
+                style={{
+                  padding: '10px 20px',
+                  backgroundColor: '#444',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '5px',
+                  cursor: 'pointer'
+                }}
+              >
+                Save Equalizer Settings
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -236,7 +275,7 @@ export default function SongPlayer() {
           onClick={handlePlayPause} 
           style={{ marginRight: '10px', backgroundColor: 'transparent', border: 'none', color: '#fff', fontSize: '30px' }}
         >
-          {isPlaying ? '❚❚' : '▶'}
+          {isPlaying ? 'Pause' : 'Play'}
         </button>
         <button 
           onClick={handleNext} 

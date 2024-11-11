@@ -11,3 +11,13 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+.custom-button {
+  background-color: #5023AA; /* Set the background color */
+  color: white;              /* Set the text color */
+  border-color: #4CAF50;     /* Set the border color */
+}
+
+.custom-button:hover {
+  background-color: #45a049; /* Darker shade for hover effect */
+}
+
